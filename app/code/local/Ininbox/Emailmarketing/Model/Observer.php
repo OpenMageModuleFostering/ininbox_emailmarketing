@@ -19,7 +19,7 @@ class Ininbox_Emailmarketing_Model_Observer
 		if(Mage::helper('emailmarketing')->isEnabled())
 		{
 			$isIninboxSendCustomerEnabled = Mage::helper('emailmarketing')->getConfig($group = 'customer_settings', $field = 'send_customer');
-			$ininboxCustomerGroupList = Mage::helper('emailmarketing')->getConfig($group = 'customer_settings', $field = 'customer_group_list');
+			$ininboxCustomerGroupList = Mage::helper('emailmarketing')->getConfig($group = 'customer_settings', $field = 'customer_group_list');			
 			
 			$ininboxResubscriber = Mage::helper('emailmarketing')->getConfig($group = 'customer_misc_settings', $field = 'update_subscriber') ? true : false;
 			$ininboxSendConfirmationEmail = Mage::helper('emailmarketing')->getConfig($group = 'customer_misc_settings', $field = 'confirm_email') ? true : false;
@@ -101,12 +101,55 @@ class Ininbox_Emailmarketing_Model_Observer
 		}
 	}
 	
+	public function salesOrderStatusAfterObserver(Varien_Event_Observer $observer)
+	{
+		if(Mage::helper('emailmarketing')->isEnabled())
+		{
+			$isIninboxSendOrderEnabled = Mage::helper('emailmarketing')->getConfig($group = 'order_settings', $field = 'send_order');
+			$ininboxOrderGroupList = Mage::helper('emailmarketing')->getConfig($group = 'order_settings', $field = 'order_group_list');
+			$ininboxOrderStatusList = Mage::helper('emailmarketing')->getConfig($group = 'order_settings', $field = 'order_status_list');
+			
+			$ininboxResubscriber = Mage::helper('emailmarketing')->getConfig($group = 'order_misc_settings', $field = 'update_subscriber') ? true : false;
+			$ininboxSendConfirmationEmail = Mage::helper('emailmarketing')->getConfig($group = 'order_misc_settings', $field = 'confirm_email') ? true : false;
+			$ininboxAddContactToAutoresponderCycle = Mage::helper('emailmarketing')->getConfig($group = 'order_misc_settings', $field = 'send_autoresponder') ? true : false;
+			
+			if ($isIninboxSendOrderEnabled && !is_null($ininboxOrderGroupList) && in_array($observer->getEvent()->getStatus(), explode(',', $ininboxOrderStatusList))) 
+			{
+				$this->createIninboxContactForSales($observer->getEvent()->getOrder(), $ininboxOrderGroupList, $ininboxResubscriber, $ininboxSendConfirmationEmail, $ininboxAddContactToAutoresponderCycle);
+			}			
+		}
+		
+		$quote_id = $observer->getEvent()->getOrder()->getQuoteId();
+		$quote = Mage::getModel('sales/quote')->load($quote_id);			
+		$method = $quote->getCheckoutMethod(true);		
+		
+		if($method == Mage_Checkout_Model_Type_Onepage::METHOD_REGISTER)
+		{
+			if(Mage::helper('emailmarketing')->isEnabled())
+			{
+				$isIninboxSendCustomerEnabled = Mage::helper('emailmarketing')->getConfig($group = 'customer_settings', $field = 'send_customer');
+				$ininboxCustomerGroupList = Mage::helper('emailmarketing')->getConfig($group = 'customer_settings', $field = 'customer_group_list');
+				
+				$ininboxResubscriber = Mage::helper('emailmarketing')->getConfig($group = 'customer_misc_settings', $field = 'update_subscriber') ? true : false;
+				$ininboxSendConfirmationEmail = Mage::helper('emailmarketing')->getConfig($group = 'customer_misc_settings', $field = 'confirm_email') ? true : false;
+				$ininboxAddContactToAutoresponderCycle = Mage::helper('emailmarketing')->getConfig($group = 'customer_misc_settings', $field = 'send_autoresponder') ? true : false;
+				
+				if($isIninboxSendCustomerEnabled && !is_null($ininboxCustomerGroupList))
+				{
+					$currentCustomer = $observer->getEvent()->getOrder()->getBillingAddress();					
+					$this->createIninboxContact($currentCustomer, $ininboxCustomerGroupList, $ininboxResubscriber, $ininboxSendConfirmationEmail, $ininboxAddContactToAutoresponderCycle);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * event listener on sales order place when customer place new order.
 	 *
 	 * @Params
 	 * $observer - contains order details
 	 */	
+	/*
 	public function salesOrderPlaceAfterObserver(Varien_Event_Observer $observer) 
 	{		
 		if(Mage::helper('emailmarketing')->isEnabled())
@@ -141,7 +184,7 @@ class Ininbox_Emailmarketing_Model_Observer
 				
 				if($isIninboxSendCustomerEnabled && !is_null($ininboxCustomerGroupList))
 				{					
-					/*$currentCustomer = Mage::getModel('customer/customer')->load($observer->getEvent()->getOrder()->getCustomerId());*/
+					// $currentCustomer = Mage::getModel('customer/customer')->load($observer->getEvent()->getOrder()->getCustomerId());
 					$currentCustomer = $observer->getEvent()->getOrder()->getBillingAddress();
 					//die($observer->getEvent()->getOrder()->custome());
 					//die(json_encode($currentCustomer));
@@ -150,6 +193,7 @@ class Ininbox_Emailmarketing_Model_Observer
 			}
 		}
 	}
+	*/
 	
 	/**
 	 * event listener on customer account edit.
@@ -223,19 +267,30 @@ class Ininbox_Emailmarketing_Model_Observer
 			{
 				$customerAttribute = $mappedField['customer_attributes'];
 				$ininboxCustomField = $mappedField['ininbox_custom_fields'];
+				
+				$customerAttributeValue = $currentCustomer->getData($customerAttribute);
+				$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
 				if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-					$params['params'][$ininboxCustomField] = $currentCustomer->getData($customerAttribute);
+					$params['params'][$ininboxCustomField] = $customerAttributeValue;
 				else
-					$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' =>  $currentCustomer->getData($customerAttribute));
+					$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
 			}
 			
 			$params['params']['Resubscribe'] = $ininboxResubscriber;
 			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
 			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
-			$params['params']['ListIDs'] = array(intval($ininboxGroupList));
-				
+			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));			
+
 			$result = Mage::getModel('emailmarketing/ininbox_contact')->add($params);
-		
+			
+			/*
+			echo '<pre>';			
+			echo json_encode($params);
+			echo json_encode($result);
+			echo '</pre>';
+			die('DIED');
+			*/
+			
 			if(isset($result['Code']) && isset($result['Message']))	
 			{		
 				$error_message = Mage::helper('adminhtml')->__('ERROR (' . $result['Code'] . '): ' . $result['Message']);
@@ -290,38 +345,34 @@ class Ininbox_Emailmarketing_Model_Observer
 				$customerAttribute = $mappedField['customer_attributes'];
 				$ininboxCustomField = $mappedField['ininbox_custom_fields'];
 				if($customerAttribute == 'default_billing' || $customerAttribute == 'default_shipping')
-				{
-					if($ininboxCustomField == 'Address')
-					{
-						$params['params']['Address'] = $currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2();
-						$params['params']['CountryCode'] = $currentCustomer->getCountryId();
-						$params['params']['City'] = $currentCustomer->getCity();
-						$params['params']['Zip'] = $currentCustomer->getPostcode();
-						$params['params']['MobilePhone'] = $currentCustomer->getTelephone();
-						$params['params']['Fax'] = $currentCustomer->getFax();
-					}
+				{					
+					if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
+						$params['params'][$ininboxCustomField] = $currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2();
 					else
-					{
-						if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-							$params['params'][$ininboxCustomField] = $currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2();
-						else
-							$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' =>  ($currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2()));
-					}
+						$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' =>  ($currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2()));				
+					
+					$params['params']['CountryCode'] = $currentCustomer->getCountryId();
+					$params['params']['City'] = $currentCustomer->getCity();
+					$params['params']['Zip'] = $currentCustomer->getPostcode();
+					$params['params']['MobilePhone'] = $currentCustomer->getTelephone();
+					$params['params']['Fax'] = $currentCustomer->getFax();
 				}
 				else
 				{
+					$customerAttributeValue = $currentCustomer->getData($customerAttribute);
+					$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
 					if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-						$params['params'][$ininboxCustomField] = $currentCustomer->getData($customerAttribute);
+						$params['params'][$ininboxCustomField] = $customerAttributeValue;
 					else
-						$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' =>  $currentCustomer->getData($customerAttribute));
+						$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
 				}
 			}
 			
 			$params['params']['Resubscribe'] = $ininboxResubscriber;
 			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
 			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
-			$params['params']['ListIDs'] = array(intval($ininboxGroupList));
-			
+			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));
+						
 			$result = Mage::getModel('emailmarketing/ininbox_contact')->add($params);	
 			
 			if(isset($result['Code']) && isset($result['Message']))	
@@ -362,7 +413,8 @@ class Ininbox_Emailmarketing_Model_Observer
 			$params['params']['Resubscribe'] = $ininboxResubscriber;
 			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
 			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
-			$params['params']['ListIDs'] = array(intval($ininboxGroupList));
+			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));
+			
 			$result = Mage::getModel('emailmarketing/ininbox_contact')->add($params);
 			
 			if(isset($result['Code']) && isset($result['Message']))
@@ -411,10 +463,13 @@ class Ininbox_Emailmarketing_Model_Observer
 				{
 					$customerAttribute = $mappedField['customer_attributes'];
 					$ininboxCustomField = $mappedField['ininbox_custom_fields'];
+					
+					$customerAttributeValue = $currentCustomer->getData($customerAttribute);
+					$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
 					if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-						$array[$ininboxCustomField] = $currentCustomer->getData($customerAttribute);
+						$params['params'][$ininboxCustomField] = $customerAttributeValue;
 					else
-						$array['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' =>  $currentCustomer->getData($customerAttribute));
+						$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
 				}
 				
 				$params['params']['Contacts'][$count++] = $array;
@@ -422,7 +477,7 @@ class Ininbox_Emailmarketing_Model_Observer
 			$params['params']['Resubscribe'] = $ininboxResubscriber;
 			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
 			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
-			$params['params']['ListIDs'] = array(intval($ininboxGroupList));			
+			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));
 			
 			$result = Mage::getModel('emailmarketing/ininbox_contact')->import($params);			
 		
@@ -469,7 +524,7 @@ class Ininbox_Emailmarketing_Model_Observer
 			$params['params']['Resubscribe'] = $ininboxResubscriber;			
 			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
 			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
-			$params['params']['ListIDs'] = array(intval($ininboxGroupList));			
+			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));
 			
 			$result = Mage::getModel('emailmarketing/ininbox_contact')->import($params);
 			
@@ -532,29 +587,25 @@ class Ininbox_Emailmarketing_Model_Observer
 					$ininboxCustomField = $mappedField['ininbox_custom_fields'];
 					if($customerAttribute == 'default_billing' || $customerAttribute == 'default_shipping')
 					{
-						if($ininboxCustomField == 'Address')
-						{
-							$array['Address'] = $currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2();
-							$array['CountryCode'] = $currentCustomer->getCountryId();
-							$array['City'] = $currentCustomer->getCity();
-							$array['Zip'] = $currentCustomer->getPostcode();
-							$array['MobilePhone'] = $currentCustomer->getTelephone();
-							$array['Fax'] = $currentCustomer->getFax();
-						}
+						if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
+							$array[$ininboxCustomField] = $currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2();
 						else
-						{
-							if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-								$array[$ininboxCustomField] = $currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2();
-							else
-								$array['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' =>  ($currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2()));
-						}
+							$array['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' =>  ($currentCustomer->getStreet1() . ' ' . $currentCustomer->getStreet2()));
+						
+						$array['CountryCode'] = $currentCustomer->getCountryId();
+						$array['City'] = $currentCustomer->getCity();
+						$array['Zip'] = $currentCustomer->getPostcode();
+						$array['MobilePhone'] = $currentCustomer->getTelephone();
+						$array['Fax'] = $currentCustomer->getFax();
 					}
 					else
 					{
+						$customerAttributeValue = $currentCustomer->getData($customerAttribute);
+						$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
 						if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-							$array[$ininboxCustomField] = $currentCustomer->getData($customerAttribute);
+							$params['params'][$ininboxCustomField] = $customerAttributeValue;
 						else
-							$array['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' =>  $currentCustomer->getData($customerAttribute));
+							$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
 					}
 				}
 				
@@ -564,7 +615,7 @@ class Ininbox_Emailmarketing_Model_Observer
 			$params['params']['Resubscribe'] = $ininboxResubscriber;
 			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
 			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
-			$params['params']['ListIDs'] = array(intval($ininboxGroupList));			
+			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));	
 			
 			$result = Mage::getModel('emailmarketing/ininbox_contact')->import($params);
 			
@@ -573,6 +624,146 @@ class Ininbox_Emailmarketing_Model_Observer
 				$error_message = Mage::helper('adminhtml')->__('ERROR (' . $result['Code'] . '): ' . $result['Message']);
 				Mage::log($error_message, null, $this->_logFile);
 			}
+		}
+		catch (Exception $e) {
+			$error_message = Mage::helper('adminhtml')->__('ERROR: Error in importing contacts to INinbox. <br />' . $e->getMessage());
+			Mage::log($error_message, null, $this->_logFile);
+		}
+		
+		return $error_message;
+	}
+		
+	public function importIninboxContactForAbandonedCarts($quoteIds, $ininboxGroupList)
+	{
+		try 
+		{
+			$ininboxPredefinedCustomFields	= Mage::getModel('emailmarketing/system_config_source_field_list')->getPredefinedCustomList();
+			$ininboxMappedCustomFields = unserialize(Mage::helper('emailmarketing')->getConfig($group = 'field_mapping', $field = 'field'));			
+			
+			$ininboxResubscriber = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_massaction_settings', $field = 'update_subscriber') ? true : false;
+			$ininboxSendConfirmationEmail = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_massaction_settings', $field = 'confirm_email') ? true : false;
+			$ininboxAddContactToAutoresponderCycle = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_massaction_settings', $field = 'send_autoresponder') ? true : false;			
+			
+			$count = 0;
+			foreach ($quoteIds as $quoteId) 
+			{
+				$currentOuote = Mage::getResourceModel('sales/quote_collection')->addFieldToFilter('entity_id', $quoteId)->getFirstItem();
+				$currentOuote->setData('ininbox_is_abandoned', 1);
+				$currentOuote->save();
+							
+				$array = array();
+				foreach($ininboxMappedCustomFields as $mappedField)
+				{
+					$customerAttribute = 'customer_' . $mappedField['customer_attributes'];
+					$ininboxCustomField = $mappedField['ininbox_custom_fields'];
+					
+					$customerAttributeValue = $currentOuote->getData($customerAttribute);
+					$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
+					if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
+						$params['params'][$ininboxCustomField] = $customerAttributeValue;
+					else
+						$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
+				}
+				
+				$params['params']['Contacts'][$count++] = $array;
+			}			
+			
+			$params['params']['Resubscribe'] = $ininboxResubscriber;
+			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
+			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
+			
+			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));			
+					
+			$result = Mage::getModel('emailmarketing/ininbox_contact')->import($params);
+			
+			if(isset($result['Code']) && isset($result['Message']))	
+			{		
+				$error_message = Mage::helper('adminhtml')->__('ERROR (' . $result['Code'] . '): ' . $result['Message']);
+				Mage::log($error_message, null, $this->_logFile);
+			}		
+		}
+		catch (Exception $e) {
+			$error_message = Mage::helper('adminhtml')->__('ERROR: Error in importing contacts to INinbox. <br />' . $e->getMessage());
+			Mage::log($error_message, null, $this->_logFile);
+		}
+		
+		return $error_message;
+	}
+	
+	function processAbandonedCarts(Varien_Event_Observer $observer)
+	{
+		$ininboxAbandonedCartsEnabled = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_settings', $field = 'add_to_list_enabled');
+		$ininboxAbandonedCartsList = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_settings', $field = 'abandoned_list');
+		$ininboxAbandonedCartsTime = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_settings', $field = 'abandoned_time');
+		$ininboxAbandonedCartsCaptureRegistered = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_settings', $field = 'register_capture');		
+		
+		if($ininboxAbandonedCartsEnabled)
+		{
+			$adapter = Mage::getSingleton('core/resource')->getConnection('sales_read');
+			$minutes = $ininboxAbandonedCartsTime;
+			$from = $adapter->getDateSubSql(
+				$adapter->quote(now()), 
+				$minutes, 
+				Varien_Db_Adapter_Interface::INTERVAL_MINUTE
+			);
+			$quotes = Mage::getResourceModel('sales/quote_collection')
+				->addFieldToFilter('reserved_order_id', array('null' => true))
+				->addFieldToFilter('customer_email', array('neq' => null))
+				->addFieldToFilter('updated_at', array('to' => $from))
+				->addFieldToFilter('ininbox_is_abandoned', array('eq' => false));
+			
+			if(!$ininboxAbandonedCartsCaptureRegistered)
+				$quotes->addFieldToFilter('checkout_method', array('eq' => 'guest'));
+							
+			if($quotes->count() > 0)
+			{
+				foreach($quotes as $quote)
+				{
+					$quote->setData('ininbox_is_abandoned', 1);
+					$quote->save();
+					$this->addIninboxContactForAbandonedCarts($quote, $ininboxAbandonedCartsList);				
+				}
+			}
+		}
+	}
+	
+	public function addIninboxContactForAbandonedCarts($currentQuote, $ininboxGroupList)
+	{
+		try 
+		{
+			$ininboxPredefinedCustomFields	= Mage::getModel('emailmarketing/system_config_source_field_list')->getPredefinedCustomList();
+			$ininboxMappedCustomFields = unserialize(Mage::helper('emailmarketing')->getConfig($group = 'field_mapping', $field = 'field'));			
+			
+			$ininboxResubscriber = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'update_subscriber') ? true : false;
+			$ininboxSendConfirmationEmail = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'confirm_email') ? true : false;
+			$ininboxAddContactToAutoresponderCycle = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'send_autoresponder') ? true : false;			
+			
+			foreach($ininboxMappedCustomFields as $mappedField)
+			{
+				$customerAttribute = 'customer_' . $mappedField['customer_attributes'];
+				$ininboxCustomField = $mappedField['ininbox_custom_fields'];
+				
+				$customerAttributeValue = $currentOuote->getData($customerAttribute);
+				$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
+				if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
+					$params['params'][$ininboxCustomField] = $customerAttributeValue;
+				else
+					$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
+			}		
+			
+			$params['params']['Resubscribe'] = $ininboxResubscriber;
+			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
+			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
+			
+			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));			
+			
+			$result = Mage::getModel('emailmarketing/ininbox_contact')->add($params);			
+			
+			if(isset($result['Code']) && isset($result['Message']))	
+			{		
+				$error_message = Mage::helper('adminhtml')->__('ERROR (' . $result['Code'] . '): ' . $result['Message']);
+				Mage::log($error_message, null, $this->_logFile);
+			}			
 		}
 		catch (Exception $e) {
 			$error_message = Mage::helper('adminhtml')->__('ERROR: Error in importing contacts to INinbox. <br />' . $e->getMessage());

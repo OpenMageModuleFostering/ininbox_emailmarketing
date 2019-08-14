@@ -80,7 +80,7 @@
 						<customer_group_list translate="label">
 							<label>Customer Group List: </label>
 							<comment>Select the list where you want to add new customer account contacts.</comment>
-							<frontend_type>select</frontend_type>
+							<frontend_type>multiselect</frontend_type>
 							<sort_order>2</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
@@ -90,6 +90,14 @@
 								<send_customer>1</send_customer>
 							</depends>
 						</customer_group_list>
+						<!--<customer_group_list_multi translate="label">
+							<label>Customer Group List: </label>							
+							<frontend_type>multiselect</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>emailmarketing/system_config_source_group_list</source_model>							
+						</customer_group_list_multi>-->
 					</fields>
 				</customer_settings>
 				<customer_misc_settings translate="label">
@@ -183,7 +191,7 @@
 						<order_group_list translate="label">
 							<label>Order Group List: </label>
 							<comment>Select the list where you want to add contacts that order.</comment>
-							<frontend_type>select</frontend_type>
+							<frontend_type>multiselect</frontend_type>
 							<sort_order>2</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
@@ -192,7 +200,19 @@
 							<depends>
 								<send_order>1</send_order>
 							</depends>
-						</order_group_list>
+						</order_group_list>						
+						<order_status_list translate="label">
+							<label>Send on which state(s): </label>
+							<comment>Choose one or more Status to determine when to subscribe in INinbox.</comment>
+							<frontend_type>multiselect</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>emailmarketing/system_config_source_order_status</source_model>
+							<depends>
+								<send_order>1</send_order>
+							</depends>
+						</order_status_list>
 					</fields>
 				</order_settings>
 				<order_misc_settings translate="label">
@@ -286,7 +306,7 @@
 						<subscriber_group_list translate="label">
 							<label>Newsletter Subscriber Group List: </label>
 							<comment>Select the list where you want to add new subscribers.</comment>
-							<frontend_type>select</frontend_type>
+							<frontend_type>multiselect</frontend_type>
 							<sort_order>2</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
@@ -369,11 +389,128 @@
 							<source_model>adminhtml/system_config_source_yesno</source_model>
 						</send_autoresponder>
 					</fields>
-				</newsletter_massaction_settings>			
+				</newsletter_massaction_settings>
+				<abandoned_carts_settings>
+					<label>Abandoned Carts Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>11</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<add_to_list_enabled translate="label">
+							<label>Add Abandoned Carts To INinbox: </label>
+							<comment>This will add any abandoned shopping cart to the INinbox List.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</add_to_list_enabled>
+						<abandoned_time translate="label">
+							<label>Abandoned Time: </label>
+							<comment>How long(in minutes) before a cart is considered abandoned?</comment>
+							<frontend_type>text</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<validate>validate-digits</validate>
+						</abandoned_time>						
+						<abandoned_list translate="label">
+							<label>Abandoned List: </label>
+							<comment>These are the List(s) that you will put abandoned shoppers into.</comment>
+							<frontend_type>multiselect</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>emailmarketing/system_config_source_group_list</source_model>							
+						</abandoned_list>						
+						<register_capture translate="label">
+							<label>Capture registered emails? </label>
+							<comment>When enabled, this feature will capture register emails from various forms within site to be used with abandoned carts.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>4</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>							
+						</register_capture>
+					</fields>
+				</abandoned_carts_settings>
+				<abandoned_carts_misc_settings translate="label">
+					<label>Abandoned Carts Miscellaneous Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>12</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<confirm_email translate="label">
+							<label>Confirmation Email (for double optin lists): </label>
+							<comment>Select 'YES' will send the confirmation email when the list is set to double optin. For single optin no mail will be send.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</confirm_email>
+						<update_subscriber translate="label">
+							<label>Update existing subscriber: </label>
+							<comment>Select 'YES' will allow to update existing subscriber.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</update_subscriber>
+						<send_autoresponder translate="label">
+							<label>Send Autoresponders: </label>
+							<comment>Select 'YES' will add contacts to the autoresponder cycle.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_autoresponder>
+					</fields>
+				</abandoned_carts_misc_settings>
+				<abandoned_carts_massaction_settings translate="label">
+					<label>Abandoned Carts Miscellaneous Massaction Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>13</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<confirm_email translate="label">
+							<label>Confirmation Email (for double optin lists): </label>
+							<comment>Select 'YES' will send the confirmation email when the list is set to double optin. For single optin no mail will be send.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</confirm_email>
+						<update_subscriber translate="label">
+							<label>Update existing subscriber: </label>
+							<comment>Select 'YES' will allow to update existing subscriber.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</update_subscriber>
+						<send_autoresponder translate="label">
+							<label>Send Autoresponders: </label>
+							<comment>Select 'YES' will add contacts to the autoresponder cycle.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_autoresponder>
+					</fields>
+				</abandoned_carts_massaction_settings>
 				<field_mapping translate="label">
 					<label>Field Mapping</label>
 					<frontend_type>text</frontend_type>
-					<sort_order>11</sort_order>
+					<sort_order>14</sort_order>
 					<show_in_default>1</show_in_default>
 					<show_in_website>1</show_in_website>
 					<fields>

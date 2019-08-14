@@ -25,9 +25,9 @@ class Ininbox_Emailmarketing_Model_Ininbox_Customfield extends Mage_Core_Model_A
 	 * 
 	 * @return list of custom fields in json format
 	 */
-	public function getPredefinedList()
+	public function getSystemDefinedList()
 	{
-		return Mage::getModel('emailmarketing/ininbox_base')->makeCall('customfields/predefined', 'PageSize=500');
+		return Mage::getModel('emailmarketing/ininbox_base')->makeCall('customfields/systemdefined', 'PageSize=500');
 	}
 }
 ?>

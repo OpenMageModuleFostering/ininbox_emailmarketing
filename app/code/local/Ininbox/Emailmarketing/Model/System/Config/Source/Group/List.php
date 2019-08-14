@@ -19,14 +19,32 @@ class Ininbox_Emailmarketing_Model_System_Config_Source_Group_List
         
         if(!is_null($data))
         {
-			foreach($data['Results'] as $row)
-			{
-				$result[$row['ListID']] = $row['Title'];
-			}
+			foreach($data['Results'] as $row)			
+				$result[] = array('value' => $row['ListID'], 'label'=>Mage::helper('adminhtml')->__($row['Title']));			
 		}
         
         return $result;
     }
+    
+	/**
+	 * Get options in "key-value" format
+	 *
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$result = array();
+		
+		$data = Mage::getModel('emailmarketing/ininbox_group')->getList();		
+        
+        if(!is_null($data))
+        {
+			foreach($data['Results'] as $row)			
+				$result[$row['ListID']] = $row['Title'];			
+		}
+        
+        return $result;
+	}
 }
 
 ?>

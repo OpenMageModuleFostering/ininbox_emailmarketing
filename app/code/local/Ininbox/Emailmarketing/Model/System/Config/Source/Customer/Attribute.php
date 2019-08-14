@@ -6,10 +6,9 @@
 **/
 class Ininbox_Emailmarketing_Model_System_Config_Source_Customer_Attribute
 {
-	protected function _construct() {
-
-		$this->_init('emailmarketing/system_config_source_customer_attribute');
-	
+	protected function _construct() 
+	{
+		$this->_init('emailmarketing/system_config_source_customer_attribute');	
 	}
     
     /**
@@ -29,14 +28,28 @@ class Ininbox_Emailmarketing_Model_System_Config_Source_Customer_Attribute
         
         $result = array();
         
-        foreach ($attributes as $attribute) {
-            
-            if (($label = $attribute->getFrontendLabel()))
-                $result[$attribute->getAttributeCode()] = $label;
-        
+        foreach ($attributes as $attribute) 
+        {
+            if (($label = $attribute->getFrontendLabel()))            
+                $result[] = array('value' => $attribute->getAttributeCode(), 'label'=>Mage::helper('adminhtml')->__($label));		
         }        
         
         return $result;
     }
+    
+    public function toArray()
+	{
+		$attributes = Mage::getModel('customer/entity_attribute_collection');
+        
+        $result = array();
+        
+        foreach ($attributes as $attribute) 
+        {            
+            if (($label = $attribute->getFrontendLabel()))            
+                $result[$attribute->getAttributeCode()] = $label;		
+        }        
+        
+        return $result;
+	}
 }
 ?>

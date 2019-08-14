@@ -6,6 +6,7 @@
 **/
 class Ininbox_Emailmarketing_Model_System_Config_Source_Field_List
 {
+	/*
 	protected $_predefinedCustomFields = array
 		(
 			'FirstName' => 'first_name',
@@ -14,16 +15,17 @@ class Ininbox_Emailmarketing_Model_System_Config_Source_Field_List
 			'Gender' => 'gender',
 			'Company' => 'company',
 			'Address' => 'address'
-			/*'CountryCode' => 'country',
-			'StateCode' => 'state',
-			'City' => 'city',
-			'Zip' => 'zip_code',
-			'HomePhone' => 'home_phone',
-			'MobilePhone' => 'mobile_phone',
-			'WorkPhone' => 'work_phone',
-			'Fax' => 'fax'*/
+			//~ 'CountryCode' => 'country',
+			//~ 'StateCode' => 'state',
+			//~ 'City' => 'city',
+			//~ 'Zip' => 'zip_code',
+			//~ 'HomePhone' => 'home_phone',
+			//~ 'MobilePhone' => 'mobile_phone',
+			//~ 'WorkPhone' => 'work_phone',
+			//~ 'Fax' => 'fax'
 		);
-		
+	*/	
+		 
 	/**
 	 * use to get the list of custome fields
 	 * 
@@ -31,17 +33,23 @@ class Ininbox_Emailmarketing_Model_System_Config_Source_Field_List
 	 */
     public function toOptionArray()
     {
-		$result = $this->_predefinedCustomFields;		
+		//$result = $this->_predefinedCustomFields;		
 		
-		$data = Mage::getModel('emailmarketing/ininbox_customfield')->getList();
-        
-        if(!is_null($data))
+		$system_defined = Mage::getModel('emailmarketing/ininbox_customfield')->getSystemDefinedList();
+		
+		if(!is_null($system_defined))
         {
-			foreach($data['Results'] as $row)
-			{
-				$result[$row['FieldName']]= $row['FieldName'];
-			}
+			foreach($system_defined['SystemFields'] as $row)			
+				$result[$row['FieldName']] = Mage::helper('adminhtml')->__($row['FieldLabel']);				
 		}
+		
+		$custom_data = Mage::getModel('emailmarketing/ininbox_customfield')->getList();
+        
+        if(!is_null($custom_data))
+        {
+			foreach($custom_data['Results'] as $row)
+				$result[$row['FieldName']] = Mage::helper('adminhtml')->__($row['FieldName']);				
+		}		
         
         return $result;
     }
@@ -53,8 +61,18 @@ class Ininbox_Emailmarketing_Model_System_Config_Source_Field_List
 	 */
 	public function getPredefinedCustomList()
 	{
-		return $this->_predefinedCustomFields;				
-	}
+		$result = array();
+		
+		$system_defined = Mage::getModel('emailmarketing/ininbox_customfield')->getSystemDefinedList();
+		
+		if(!is_null($system_defined))
+        {
+			foreach($system_defined['SystemFields'] as $row)			
+				$result[$row['FieldName']] = Mage::helper('adminhtml')->__($row['FieldLabel']);				
+		}		
+		
+		return $result;
+	}	
 }
 
 ?>

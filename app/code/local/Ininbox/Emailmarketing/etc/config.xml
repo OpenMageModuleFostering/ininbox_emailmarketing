@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Ininbox_Emailmarketing>
-			<version>1.2.2</version>
+			<version>2.0.0</version>
 		</Ininbox_Emailmarketing>
 	</modules>
 	<frontend>
@@ -54,6 +54,11 @@
 			<emailmarketing>
 				<class>Ininbox_Emailmarketing_Model</class>
 			</emailmarketing>
+			<sales>
+                <rewrite>                    
+                    <order>Ininbox_Emailmarketing_Model_Sales_Order</order>
+                </rewrite>
+            </sales>
 		</models>
 		<resources>
 			<emailmarketing_setup>
@@ -112,7 +117,7 @@
 					</Ininbox_Emailmarketing_Model_Observer>
 				</observers>
 			</adminhtml_customer_save_after>
-			<sales_order_place_after><!-- Default Event -->
+			<!--<sales_order_place_after>
 				<observers>
 					<Ininbox_Emailmarketing_Model_Observer>
 						<type>singleton</type>
@@ -120,16 +125,16 @@
 						<method>salesOrderPlaceAfterObserver</method>
 					</Ininbox_Emailmarketing_Model_Observer>
 				</observers>
-			</sales_order_place_after>
-			<sales_order_save_after><!-- Default Event -->
+			</sales_order_place_after>-->
+			<sales_order_status_after>
 				<observers>
 					<Ininbox_Emailmarketing_Model_Observer>
 						<type>singleton</type>
 						<class>Ininbox_Emailmarketing_Model_Observer</class>
-						<method>salesOrderPlaceAfterObserver</method>
+						<method>salesOrderStatusAfterObserver</method>
 					</Ininbox_Emailmarketing_Model_Observer>
 				</observers>
-			</sales_order_save_after>
+			</sales_order_status_after>
 			<newsletter_subscribe_after>
 				<observers>
 					<Ininbox_Emailmarketing_Model_Observer>
@@ -174,6 +179,10 @@
 				<title>INinbox</title>
 				<sort_order>90</sort_order>
 				<children>
+					<ininboxabandonedcarts>
+						<title>Abandoned Carts</title>
+						<action>admin_ininbox_emailmarketing/adminhtml_abandonedCarts</action>
+					</ininboxabandonedcarts>
 					<emailmarketing>
 						<title>Email Marketing Settings</title>
 						<action>adminhtml/system_config/edit/section/ininbox_emailmarketing_options</action>
@@ -220,5 +229,22 @@
 				<url>http://api.ininbox.com/v1/</url>
 			</general>
 		</ininbox_emailmarketing_options>
+		<ininbox_emailmarketing_options>
+			<abandoned_carts_settings>
+				<abandoned_time>30</abandoned_time>
+			</abandoned_carts_settings>
+		</ininbox_emailmarketing_options>
 	</default>
+	<crontab>
+		<jobs>
+			<ininbox_process_abandoned_carts>
+				<schedule>
+					<cron_expr>*/10 * * * *</cron_expr>
+				</schedule>
+				<run>
+					<model>emailmarketing/observer::processAbandonedCarts</model>
+				</run>
+			</ininbox_process_abandoned_carts>
+		</jobs>
+	</crontab>
 </config>

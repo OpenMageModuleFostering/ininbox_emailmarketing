@@ -122,6 +122,44 @@ class Ininbox_Emailmarketing_Adminhtml_MassactionController extends Mage_Adminht
         $this->_redirect('adminhtml/sales_order/index/');
 		return;
 	}
+	
+	
+	/** 
+	 * Action on mass action in sales order to add customer to INinbox list
+	 */
+	public function abandonedCartsAction()
+	{
+		$quoteIds = $this->getRequest()->getPost('quote_ids', array());
+				
+        if (!is_array($quoteIds)) {
+             Mage::getSingleton('adminhtml/session')->addError(Mage::helper('newsletter')->__('Please select cart(s)'));
+        }
+        else {
+			try {									
+				$isIninboxAbandonedCartsEnabled = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_settings', $field = 'add_to_list_enabled');
+				$ininboxAbandonedCartsList = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_settings', $field = 'abandoned_list');
+					
+				if($isIninboxAbandonedCartsEnabled && !is_null($ininboxAbandonedCartsList))
+				{					
+					$message = Mage::getModel('emailmarketing/observer')->importIninboxContactForAbandonedCarts($quoteIds, $ininboxAbandonedCartsList);
+					
+					if(isset($message) && $message != '')						
+						Mage::getSingleton('adminhtml/session')->addError($message);						
+					else
+					{
+						Mage::getSingleton('adminhtml/session')->addSuccess(
+							Mage::helper('adminhtml')->__('Total of %d record(s) were added.', count($quoteIds))
+						);
+					}
+				}
+			} catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+            }
+		}
+		
+        $this->_redirect('admin_ininbox_emailmarketing/adminhtml_abandonedCarts/index/');
+		return;
+	}
 }
 
 ?>

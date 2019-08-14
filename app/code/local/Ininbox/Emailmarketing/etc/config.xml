@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Ininbox_Emailmarketing>
-			<version>1.2.0</version>
+			<version>1.2.2</version>
 		</Ininbox_Emailmarketing>
 	</modules>
 	<frontend>
@@ -11,7 +11,7 @@
 				<use>standard</use>
 				<args>
 					<module>Ininbox_Emailmarketing</module>
-					<frontName>emailmarketing</frontName>
+					<frontName>ininbox_emailmarketing</frontName>
 				</args>
 			</emailmarketing>
 			<newsletter>
@@ -37,7 +37,7 @@
 				<use>admin</use>
 				<args>
 					<module>Ininbox_Emailmarketing</module>
-					<frontName>admin_emailmarketing</frontName>
+					<frontName>admin_ininbox_emailmarketing</frontName>
 				</args>
 			</emailmarketing>
 			<adminhtml>
@@ -157,6 +157,15 @@
 					</Ininbox_Emailmarketing_Model_Observer>
 				</observers>
 			</customer_newsletter_subscribe_after>
+			<admin_system_config_changed_section_ininbox_emailmarketing_options>
+				<observers>
+					<Ininbox_Emailmarketing_Model_Observer>
+						<type>singleton</type>
+						<class>Ininbox_Emailmarketing_Model_Observer</class>
+						<method>validateIninboxConfig</method>
+					</Ininbox_Emailmarketing_Model_Observer>
+				</observers>
+			</admin_system_config_changed_section_ininbox_emailmarketing_options>
 		</events>
 	</global>
 	<adminhtml>
@@ -167,7 +176,7 @@
 				<children>
 					<emailmarketing>
 						<title>Email Marketing Settings</title>
-						<action>adminhtml/system_config/edit/section/emailmarketing_options</action>
+						<action>adminhtml/system_config/edit/section/ininbox_emailmarketing_options</action>
 					</emailmarketing>
 					<ininboxlogin>
 						<title>INinbox Login</title>
@@ -186,9 +195,9 @@
 							<children>
 								<config>
 									<children>
-										<emailmarketing_options>
+										<ininbox_emailmarketing_options>
 											<title>Email Marketing Module Section</title>
-										</emailmarketing_options>
+										</ininbox_emailmarketing_options>
 									</children>
 								</config>
 							</children>
@@ -197,12 +206,19 @@
 				</admin>
 			</resources>
 		</acl>
+        <layout>
+			<updates>
+				<mobilecase>
+					<file>ininbox.xml</file>
+				</mobilecase>
+			</updates>
+		</layout>
 	</adminhtml>
 	<default>
-		<emailmarketing_options>
+		<ininbox_emailmarketing_options>
 			<general>
 				<url>http://api.ininbox.com/v1/</url>
 			</general>
-		</emailmarketing_options>
+		</ininbox_emailmarketing_options>
 	</default>
 </config>

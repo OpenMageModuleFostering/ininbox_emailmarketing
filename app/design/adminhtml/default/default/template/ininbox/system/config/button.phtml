@@ -1,0 +1,88 @@
+<script type="text/javascript">
+    //<![CDATA[    
+    Event.observe(window, "load", function(){	
+		$("ininbox_connect_button").up().next().hide();				
+		hideShowPanels(false);		
+		ajaxCall(true);
+	});
+	
+    function check() 
+    {
+		ajaxCall(false);
+    }
+    
+    function ajaxCall(onload)
+    {
+		var emailmarketing_enabled = $('ininbox_emailmarketing_options_general_enabled').getValue();
+		var emailmarketing_url = $('ininbox_emailmarketing_options_general_url').getValue();
+		var emailmarketing_key = $('ininbox_emailmarketing_options_general_key').getValue();
+		
+		if(emailmarketing_enabled != 0 && emailmarketing_url != '' && emailmarketing_key != '')
+		{
+			$('ininbox_connect_button').addClassName('disabled').setAttribute('disabled', 'disabled');;
+			
+			new Ajax.Request('<?php echo $this->getAjaxCheckUrl() ?>', {
+				method:     'post',
+				parameters: 'api_url=' + emailmarketing_url + '&api_key=' + emailmarketing_key,
+				onSuccess: function(transport){
+					if (transport.responseText){
+						if(transport.responseText == 1)						
+						{
+							if(onload)
+								hideShowPanels(true)
+							else
+								window.location.href = '<?php $this->getConfigUrl() ?>';
+						}
+						else if(!onload)
+						{
+							hideShowPanels(false);
+							$('ininbox_emailmarketing_options_general_key').setValue('');
+							alert(transport.responseText);
+						}
+					}
+					
+					$('ininbox_connect_button').removeClassName('disabled').removeAttribute('disabled');
+				}
+			});
+		}
+		else if(!onload)
+			alert('Please enter proper details. ');		
+	}
+    
+    function hideShowPanels(show)
+    {
+		var display = show ? '' : 'none';
+		$('ininbox_emailmarketing_options_customer_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_customer_settings-head').up().setStyle({display: display});
+		
+		$('ininbox_emailmarketing_options_customer_misc_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_customer_misc_settings-head').up().setStyle({display: display});
+		
+		$('ininbox_emailmarketing_options_customer_massaction_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_customer_massaction_settings-head').up().setStyle({display: display});
+		
+		$('ininbox_emailmarketing_options_order_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_order_settings-head').up().setStyle({display: display});
+		
+		$('ininbox_emailmarketing_options_order_misc_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_order_misc_settings-head').up().setStyle({display: display});		
+		
+		$('ininbox_emailmarketing_options_order_massaction_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_order_massaction_settings-head').up().setStyle({display: display});
+		
+		$('ininbox_emailmarketing_options_newsletter_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_newsletter_settings-head').up().setStyle({display: display});
+		
+		$('ininbox_emailmarketing_options_newsletter_misc_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_newsletter_misc_settings-head').up().setStyle({display: display});
+		
+		$('ininbox_emailmarketing_options_newsletter_massaction_settings').setStyle({display: display});
+		$('ininbox_emailmarketing_options_newsletter_massaction_settings-head').up().setStyle({display: display});
+		
+		$('ininbox_emailmarketing_options_field_mapping').setStyle({display: display});
+		$('ininbox_emailmarketing_options_field_mapping-head').up().setStyle({display: display});		
+	}
+    //]]>
+</script>
+
+<?php echo $this->getButtonHtml() ?>

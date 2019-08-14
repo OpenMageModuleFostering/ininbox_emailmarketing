@@ -1,0 +1,11 @@
+<layout>
+    <default>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>ininbox/css/ininbox.css</name>
+            </action>
+            <action method="addCss"><name>ininbox/css/ininbox.css</name></action>
+        </reference>
+    </default>
+</layout>

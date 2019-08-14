@@ -15,14 +15,15 @@ class Ininbox_Emailmarketing_Model_Ininbox_Base extends Mage_Core_Model_Abstract
 
 	protected function _construct() {
 
-		$this->curlExists = function_exists( 'curl_init' ) && function_exists( 'curl_setopt' );
-
 		$this->_init('emailmarketing/ininbox_base');
+
 		$helper = Mage::helper('emailmarketing');
 		if($helper->isEnabled())
 		{
 			$this->api_key = $helper->getConfig($group = 'general', $field = 'key');
 			$this->api_url = $helper->getConfig($group = 'general', $field = 'url');
+			$this->curlExists = function_exists( 'curl_init' ) && function_exists( 'curl_setopt' );
+
 			if($this->api_key != '' && $this->api_url != '' && $this->curlExists)
 			{
 				$this->api_isready = true;
@@ -84,7 +85,7 @@ class Ininbox_Emailmarketing_Model_Ininbox_Base extends Mage_Core_Model_Abstract
 		
 		$postdata = null; $result = null;		
 
-		if ($this->curl && $this->curlExists){
+		if ($this->api_isready && $this->curl && $this->curlExists ){
 			
 			$url=$api_url.$action.'.'.$format;			
 			$ch = curl_init( );			
@@ -103,14 +104,15 @@ class Ininbox_Emailmarketing_Model_Ininbox_Base extends Mage_Core_Model_Abstract
 			if($format=='json'){
 				curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Content-Length: ' . strlen($postdata)));
 			}
-            
 			
 			$result = curl_exec($ch);
 			curl_close($ch);
-			
+				
 			if($format=='json'){
 				return json_decode($result, true);
 			}
+            
+            $result['customurl'] = 
             
 		}
 		return $result;

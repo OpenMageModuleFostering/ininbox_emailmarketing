@@ -3,11 +3,11 @@
     "type": "magento-module",
     "license": "OSL",
     "homepage": "",
-    "description": "Easily send beautiful newsletters, Upload your contacts and access them whenever you are ready to mail!",
+    "description": "Sync your subscribers, customers & orders to an email list of choice and follow up with beautiful newsletters!",
     "authors": [
     {
         "name": "INinbox.com",
-        "email": "support@ininbox.com"
+        "email": "inspiredsupport@ininbox.com"
     }
 ],
     "suggest": {

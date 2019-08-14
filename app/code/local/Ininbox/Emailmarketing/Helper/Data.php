@@ -13,7 +13,7 @@ class Ininbox_Emailmarketing_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function isEnabled()
 	{
-		return Mage::getStoreConfig('emailmarketing_options/general/enabled', Mage::app()->getStore());
+		return Mage::getStoreConfig('ininbox_emailmarketing_options/general/enabled', Mage::app()->getStore());
 	}
 
 	/**
@@ -27,7 +27,7 @@ class Ininbox_Emailmarketing_Helper_Data extends Mage_Core_Helper_Abstract
 	 */
 	public function getConfig($group, $field)
 	{
-		return Mage::getStoreConfig('emailmarketing_options/' . $group . '/' . $field, Mage::app()->getStore());
+		return Mage::getStoreConfig('ininbox_emailmarketing_options/' . $group . '/' . $field, Mage::app()->getStore());
 	}
 }
 ?>

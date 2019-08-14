@@ -31,5 +31,16 @@ class Ininbox_Emailmarketing_Model_Ininbox_Contact extends Mage_Core_Model_Abstr
 		return Mage::getModel('emailmarketing/ininbox_base')
 			->makeCall('contacts/create', '', 'json', $params);
 	}
+	
+	/**
+	 * use to import contacts in ininbox
+	 * 
+	 * @return response for import from ininbox
+	 */
+	public function import($params)
+	{
+		return Mage::getModel('emailmarketing/ininbox_base')
+			->makeCall('contacts/import', '', 'json', $params);
+	}
 }
 ?>

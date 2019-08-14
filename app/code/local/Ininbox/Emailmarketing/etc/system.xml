@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <config>
 	<sections>
-		<emailmarketing_options translate="label" module="emailmarketing">
+		<ininbox_emailmarketing_options translate="label" module="emailmarketing">
 			<class>separator-top</class>
 			<tab>customer</tab>
-			<label><![CDATA[<span id="ininbox_tab_options">Email Marketing</span><script>if($('ininbox_tab_options').up().hasClassName('active')) $('ininbox_tab_options').up().setStyle('background:#666;color:#fff;'); else $('ininbox_tab_options').up().setStyle('background:#333;color:#fff;'); $('ininbox_tab_options').setStyle('background-image: url("' + SKIN_URL + 'images/ininbox/ininbox.png"); padding: 1px 0px 0px 68px; background-color: transparent; background-size:62px 14px; background-position: 0px 2px; background-repeat: no-repeat no-repeat;');</script>]]></label>
+			<label><![CDATA[<span id="ininbox_tab_options">Email Marketing</span><script>if($('ininbox_tab_options').up().hasClassName('active')) $('ininbox_tab_options').up().setStyle('background:#666;color:#fff;'); else $('ininbox_tab_options').up().setStyle('background:#333;color:#fff;');</script>]]></label>
 			<sort_order>700</sort_order>
 			<show_in_default>1</show_in_default>
 			<show_in_website>1</show_in_website>
@@ -18,27 +18,7 @@
 					<fields>
 						<enabled translate="label">
 							<label>Enabled: </label>
-							<comment>
-								Select 'YES' will enable this extension for this Magento Store.
-                            	<![CDATA[
-			                        <script type="text/javascript">			                        	
-										checkGeneralConfig = function() {
-											var emailmarketing_enabled = $('emailmarketing_options_general_enabled').getValue();
-											var emailmarketing_url = $('emailmarketing_options_general_url').getValue();
-											var emailmarketing_key = $('emailmarketing_options_general_key').getValue();
-											if(emailmarketing_enabled == 0 || emailmarketing_url == '' || emailmarketing_key == '')											
-											{
-												$('emailmarketing_options_list').up().hide();
-												$('emailmarketing_options_miscellaneous').up().hide();
-												$('emailmarketing_options_field_mapping').up().hide();												
-											}											
-										}
-			                            Event.observe(window, 'load', function() {			                            	
-			                                checkGeneralConfig();
-			                            })
-			                        </script>
-                    			]]>
-							</comment>
+							<comment>Select 'YES' will enable this extension for this Magento Store.</comment>
 							<frontend_type>select</frontend_type>
 							<sort_order>1</sort_order>
 							<show_in_default>1</show_in_default>
@@ -53,6 +33,7 @@
 							<sort_order>2</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
+							<validate>required-entry</validate>
 							<depends>
 								<enabled>1</enabled>
 							</depends>
@@ -64,10 +45,20 @@
 							<sort_order>3</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
+							<validate>required-entry</validate>
 							<depends>
 								<enabled>1</enabled>
 							</depends>
 						</key>
+						<connect translate="label">
+                            <label> </label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>emailmarketing/adminhtml_system_config_form_button</frontend_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>                            
+                        </connect>
 					</fields>
 				</general>
 				<customer_settings translate="label">
@@ -399,6 +390,6 @@
                     </fields>
 				</field_mapping>
 			</groups>
-		</emailmarketing_options>
+		</ininbox_emailmarketing_options>
 	</sections>
 </config>

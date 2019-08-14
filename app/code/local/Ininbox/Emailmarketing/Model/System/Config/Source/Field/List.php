@@ -31,9 +31,9 @@ class Ininbox_Emailmarketing_Model_System_Config_Source_Field_List
 	 */
     public function toOptionArray()
     {
-		$result = $this->_predefinedCustomFields;
+		$result = $this->_predefinedCustomFields;		
 		
-		$data = Mage::getModel('emailmarketing/ininbox_customfield')->getList();		
+		$data = Mage::getModel('emailmarketing/ininbox_customfield')->getList();
         
         if(!is_null($data))
         {

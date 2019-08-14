@@ -2,7 +2,7 @@
 <config>
 	<modules>
 		<Ininbox_Emailmarketing>
-			<version>2.0.0</version>
+			<version>2.0.1</version>
 		</Ininbox_Emailmarketing>
 	</modules>
 	<frontend>

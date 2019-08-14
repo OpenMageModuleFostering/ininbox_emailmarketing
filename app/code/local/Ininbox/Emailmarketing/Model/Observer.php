@@ -467,9 +467,9 @@ class Ininbox_Emailmarketing_Model_Observer
 					$customerAttributeValue = $currentCustomer->getData($customerAttribute);
 					$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
 					if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-						$params['params'][$ininboxCustomField] = $customerAttributeValue;
+						$array[$ininboxCustomField] = $customerAttributeValue;
 					else
-						$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
+						$array['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
 				}
 				
 				$params['params']['Contacts'][$count++] = $array;
@@ -603,9 +603,9 @@ class Ininbox_Emailmarketing_Model_Observer
 						$customerAttributeValue = $currentCustomer->getData($customerAttribute);
 						$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
 						if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-							$params['params'][$ininboxCustomField] = $customerAttributeValue;
+							$array[$ininboxCustomField] = $customerAttributeValue;
 						else
-							$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
+							$array['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
 					}
 				}
 				
@@ -647,9 +647,9 @@ class Ininbox_Emailmarketing_Model_Observer
 			$count = 0;
 			foreach ($quoteIds as $quoteId) 
 			{
-				$currentOuote = Mage::getResourceModel('sales/quote_collection')->addFieldToFilter('entity_id', $quoteId)->getFirstItem();
-				$currentOuote->setData('ininbox_is_abandoned', 1);
-				$currentOuote->save();
+				$currentQuote = Mage::getResourceModel('sales/quote_collection')->addFieldToFilter('entity_id', $quoteId)->getFirstItem();
+				$currentQuote->setData('ininbox_is_abandoned', 1);
+				$currentQuote->save();
 							
 				$array = array();
 				foreach($ininboxMappedCustomFields as $mappedField)
@@ -657,12 +657,12 @@ class Ininbox_Emailmarketing_Model_Observer
 					$customerAttribute = 'customer_' . $mappedField['customer_attributes'];
 					$ininboxCustomField = $mappedField['ininbox_custom_fields'];
 					
-					$customerAttributeValue = $currentOuote->getData($customerAttribute);
+					$customerAttributeValue = $currentQuote->getData($customerAttribute);
 					$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
 					if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-						$params['params'][$ininboxCustomField] = $customerAttributeValue;
+						$array[$ininboxCustomField] = $customerAttributeValue;
 					else
-						$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
+						$array['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
 				}
 				
 				$params['params']['Contacts'][$count++] = $array;
@@ -675,7 +675,7 @@ class Ininbox_Emailmarketing_Model_Observer
 			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));			
 					
 			$result = Mage::getModel('emailmarketing/ininbox_contact')->import($params);
-			
+						
 			if(isset($result['Code']) && isset($result['Message']))	
 			{		
 				$error_message = Mage::helper('adminhtml')->__('ERROR (' . $result['Code'] . '): ' . $result['Message']);
@@ -729,41 +729,46 @@ class Ininbox_Emailmarketing_Model_Observer
 	
 	public function addIninboxContactForAbandonedCarts($currentQuote, $ininboxGroupList)
 	{
+		$error_message = true;
 		try 
 		{
-			$ininboxPredefinedCustomFields	= Mage::getModel('emailmarketing/system_config_source_field_list')->getPredefinedCustomList();
-			$ininboxMappedCustomFields = unserialize(Mage::helper('emailmarketing')->getConfig($group = 'field_mapping', $field = 'field'));			
-			
-			$ininboxResubscriber = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'update_subscriber') ? true : false;
-			$ininboxSendConfirmationEmail = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'confirm_email') ? true : false;
-			$ininboxAddContactToAutoresponderCycle = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'send_autoresponder') ? true : false;			
-			
-			foreach($ininboxMappedCustomFields as $mappedField)
+			if(!is_null($currentQuote))
 			{
-				$customerAttribute = 'customer_' . $mappedField['customer_attributes'];
-				$ininboxCustomField = $mappedField['ininbox_custom_fields'];
+				$ininboxPredefinedCustomFields	= Mage::getModel('emailmarketing/system_config_source_field_list')->getPredefinedCustomList();
+				$ininboxMappedCustomFields = unserialize(Mage::helper('emailmarketing')->getConfig($group = 'field_mapping', $field = 'field'));			
 				
-				$customerAttributeValue = $currentOuote->getData($customerAttribute);
-				$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
-				if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
-					$params['params'][$ininboxCustomField] = $customerAttributeValue;
-				else
-					$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);
-			}		
-			
-			$params['params']['Resubscribe'] = $ininboxResubscriber;
-			$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
-			$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
-			
-			$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));			
-			
-			$result = Mage::getModel('emailmarketing/ininbox_contact')->add($params);			
-			
-			if(isset($result['Code']) && isset($result['Message']))	
-			{		
-				$error_message = Mage::helper('adminhtml')->__('ERROR (' . $result['Code'] . '): ' . $result['Message']);
-				Mage::log($error_message, null, $this->_logFile);
-			}			
+				$ininboxResubscriber = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'update_subscriber') ? true : false;
+				$ininboxSendConfirmationEmail = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'confirm_email') ? true : false;
+				$ininboxAddContactToAutoresponderCycle = Mage::helper('emailmarketing')->getConfig($group = 'abandoned_carts_misc_settings', $field = 'send_autoresponder') ? true : false;			
+				
+				foreach($ininboxMappedCustomFields as $mappedField)
+				{
+					$customerAttribute = 'customer_' . $mappedField['customer_attributes'];
+					$ininboxCustomField = $mappedField['ininbox_custom_fields'];
+					
+					
+					$customerAttributeValue = $currentQuote->getData($customerAttribute);
+					$customerAttributeValue = is_null($customerAttributeValue) ? '': $customerAttributeValue;
+					if(array_key_exists($ininboxCustomField, $ininboxPredefinedCustomFields))
+						$params['params'][$ininboxCustomField] = $customerAttributeValue;
+					else
+						$params['params']['CustomFields'][] = array('Key' => $ininboxCustomField, 'Value' => $customerAttributeValue);			
+				}		
+				
+				$params['params']['Resubscribe'] = $ininboxResubscriber;
+				$params['params']['SendConfirmationEmail'] = $ininboxSendConfirmationEmail;
+				$params['params']['AddContactToAutoresponderCycle'] = $ininboxAddContactToAutoresponderCycle;
+				
+				$params['params']['ListIDs'] = array_map('intval', explode(',', $ininboxGroupList));			
+				
+				$result = Mage::getModel('emailmarketing/ininbox_contact')->add($params);			
+				
+				if(isset($result['Code']) && isset($result['Message']))	
+				{		
+					$error_message = Mage::helper('adminhtml')->__('ERROR (' . $result['Code'] . '): ' . $result['Message']);
+					Mage::log($error_message, null, $this->_logFile);
+				}			
+			}
 		}
 		catch (Exception $e) {
 			$error_message = Mage::helper('adminhtml')->__('ERROR: Error in importing contacts to INinbox. <br />' . $e->getMessage());

@@ -1,0 +1,404 @@
+<?xml version="1.0"?>
+<config>
+	<sections>
+		<emailmarketing_options translate="label" module="emailmarketing">
+			<class>separator-top</class>
+			<tab>customer</tab>
+			<label><![CDATA[<span id="ininbox_tab_options">Email Marketing</span><script>if($('ininbox_tab_options').up().hasClassName('active')) $('ininbox_tab_options').up().setStyle('background:#666;color:#fff;'); else $('ininbox_tab_options').up().setStyle('background:#333;color:#fff;'); $('ininbox_tab_options').setStyle('background-image: url("' + SKIN_URL + 'images/ininbox/ininbox.png"); padding: 1px 0px 0px 68px; background-color: transparent; background-size:62px 14px; background-position: 0px 2px; background-repeat: no-repeat no-repeat;');</script>]]></label>
+			<sort_order>700</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<groups>
+				<general translate="label">
+					<label>General information</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>1</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<enabled translate="label">
+							<label>Enabled: </label>
+							<comment>
+								Select 'YES' will enable this extension for this Magento Store.
+                            	<![CDATA[
+			                        <script type="text/javascript">			                        	
+										checkGeneralConfig = function() {
+											var emailmarketing_enabled = $('emailmarketing_options_general_enabled').getValue();
+											var emailmarketing_url = $('emailmarketing_options_general_url').getValue();
+											var emailmarketing_key = $('emailmarketing_options_general_key').getValue();
+											if(emailmarketing_enabled == 0 || emailmarketing_url == '' || emailmarketing_key == '')											
+											{
+												$('emailmarketing_options_list').up().hide();
+												$('emailmarketing_options_miscellaneous').up().hide();
+												$('emailmarketing_options_field_mapping').up().hide();												
+											}											
+										}
+			                            Event.observe(window, 'load', function() {			                            	
+			                                checkGeneralConfig();
+			                            })
+			                        </script>
+                    			]]>
+							</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</enabled>
+						<url translate="label">
+							<label>INinbox API Url: </label>
+							<comment>This url will help extension to connect to INinbox
+								API.</comment>
+							<frontend_type>text</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<depends>
+								<enabled>1</enabled>
+							</depends>
+						</url>
+						<key translate="label">
+							<label>INinbox Key: </label>
+							<comment>This key will help the extension to connect to your INinbox account. You can get this key from INinbox.com >> Account settings >> API</comment>
+							<frontend_type>text</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<depends>
+								<enabled>1</enabled>
+							</depends>
+						</key>
+					</fields>
+				</general>
+				<customer_settings translate="label">
+					<label>Customer Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>2</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<send_customer translate="label">
+							<label>Send Customer: </label>
+							<comment>Select 'YES'  will add new customer accounts to a list of choice.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_customer>
+						<customer_group_list translate="label">
+							<label>Customer Group List: </label>
+							<comment>Select the list where you want to add new customer account contacts.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>emailmarketing/system_config_source_group_list
+							</source_model>
+							<depends>
+								<send_customer>1</send_customer>
+							</depends>
+						</customer_group_list>
+					</fields>
+				</customer_settings>
+				<customer_misc_settings translate="label">
+					<label>Customer Miscellaneous Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>3</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<confirm_email translate="label">
+							<label>Confirmation Email (for double optin lists): </label>
+							<comment>Select 'YES' will send the confirmation email when the list is set to double optin. For single optin no mail will be send.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</confirm_email>
+						<update_subscriber translate="label">
+							<label>Update existing subscriber: </label>
+							<comment>Select 'YES' will allow to update existing subscriber.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</update_subscriber>
+						<send_autoresponder translate="label">
+							<label>Send Autoresponders: </label>
+							<comment>Select 'YES' will add contacts to the autoresponder cycle.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_autoresponder>
+					</fields>
+				</customer_misc_settings>
+				<customer_massaction_settings translate="label">
+					<label>Customer Miscellaneous Massaction Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>4</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<confirm_email translate="label">
+							<label>Confirmation Email (for double optin lists): </label>
+							<comment>Select 'YES' will send the confirmation email when the list is set to double optin. For single optin no mail will be send.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</confirm_email>
+						<update_subscriber translate="label">
+							<label>Update existing subscriber: </label>
+							<comment>Select 'YES' will allow to update existing subscriber.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</update_subscriber>
+						<send_autoresponder translate="label">
+							<label>Send Autoresponders: </label>
+							<comment>Select 'YES' will add contacts to the autoresponder cycle.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_autoresponder>
+					</fields>
+				</customer_massaction_settings>
+				<order_settings translate="label">
+					<label>Order Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>5</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<send_order translate="label">
+							<label>Send Order: </label>
+							<comment>Select 'YES'  will add new orders to a list of choice.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_order>
+						<order_group_list translate="label">
+							<label>Order Group List: </label>
+							<comment>Select the list where you want to add contacts that order.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>emailmarketing/system_config_source_group_list
+							</source_model>
+							<depends>
+								<send_order>1</send_order>
+							</depends>
+						</order_group_list>
+					</fields>
+				</order_settings>
+				<order_misc_settings translate="label">
+					<label>Order Miscellaneous Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>6</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<confirm_email translate="label">
+							<label>Confirmation Email (for double optin lists): </label>
+							<comment>Select 'YES' will send the confirmation email when the list is set to double optin. For single optin no mail will be send.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</confirm_email>
+						<update_subscriber translate="label">
+							<label>Update existing subscriber: </label>
+							<comment>Select 'YES' will allow to update existing subscriber.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</update_subscriber>
+						<send_autoresponder translate="label">
+							<label>Send Autoresponders: </label>
+							<comment>Select 'YES' will add contacts to the autoresponder cycle.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_autoresponder>
+					</fields>
+				</order_misc_settings>
+				<order_massaction_settings translate="label">
+					<label>Order Miscellaneous Massaction Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>7</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<confirm_email translate="label">
+							<label>Confirmation Email (for double optin lists): </label>
+							<comment>Select 'YES' will send the confirmation email when the list is set to double optin. For single optin no mail will be send.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</confirm_email>
+						<update_subscriber translate="label">
+							<label>Update existing subscriber: </label>
+							<comment>Select 'YES' will allow to update existing subscriber.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</update_subscriber>
+						<send_autoresponder translate="label">
+							<label>Send Autoresponders: </label>
+							<comment>Select 'YES' will add contacts to the autoresponder cycle.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_autoresponder>
+					</fields>
+				</order_massaction_settings>
+				<newsletter_settings translate="label">
+					<label>Newsletter Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>8</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<send_subscriber translate="label">
+							<label>Send Newsletter Subscriber: </label>
+							<comment>Select 'YES' will add new subscribers to a list of choice.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_subscriber>
+						<subscriber_group_list translate="label">
+							<label>Newsletter Subscriber Group List: </label>
+							<comment>Select the list where you want to add new subscribers.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>emailmarketing/system_config_source_group_list
+							</source_model>
+							<depends>
+								<send_subscriber>1</send_subscriber>
+							</depends>
+						</subscriber_group_list>
+					</fields>
+				</newsletter_settings>
+				<newsletter_misc_settings translate="label">
+					<label>Newsletter Miscellaneous Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>9</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<confirm_email translate="label">
+							<label>Confirmation Email (for double optin lists): </label>
+							<comment>Select 'YES' will send the confirmation email when the list is set to double optin. For single optin no mail will be send.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</confirm_email>
+						<update_subscriber translate="label">
+							<label>Update existing subscriber: </label>
+							<comment>Select 'YES' will allow to update existing subscriber.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</update_subscriber>
+						<send_autoresponder translate="label">
+							<label>Send Autoresponders: </label>
+							<comment>Select 'YES' will add contacts to the autoresponder cycle.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_autoresponder>
+					</fields>
+				</newsletter_misc_settings>
+				<newsletter_massaction_settings translate="label">
+					<label>Newsletter Miscellaneous Massaction Settings</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>10</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+						<confirm_email translate="label">
+							<label>Confirmation Email (for double optin lists): </label>
+							<comment>Select 'YES' will send the confirmation email when the list is set to double optin. For single optin no mail will be send.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</confirm_email>
+						<update_subscriber translate="label">
+							<label>Update existing subscriber: </label>
+							<comment>Select 'YES' will allow to update existing subscriber.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</update_subscriber>
+						<send_autoresponder translate="label">
+							<label>Send Autoresponders: </label>
+							<comment>Select 'YES' will add contacts to the autoresponder cycle.</comment>
+							<frontend_type>select</frontend_type>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+						</send_autoresponder>
+					</fields>
+				</newsletter_massaction_settings>			
+				<field_mapping translate="label">
+					<label>Field Mapping</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>11</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<fields>
+                        <field translate="label">
+                            <label>Fields</label>
+							<comment>In INinbox the "email" field is a mandatory field. For all other fields it's your choice whether you want to send them to INInbox as well. Set up proper fieldmapping to tell INinbox which fields contain which values.</comment>
+							<frontend_model>emailmarketing/field</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>							
+                            <source_model>emailmarketing/system_config_source_field_list</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </field>
+                    </fields>
+				</field_mapping>
+			</groups>
+		</emailmarketing_options>
+	</sections>
+</config>

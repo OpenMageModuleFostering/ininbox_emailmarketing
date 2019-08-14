@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config>
+	<modules>
+		<Ininbox_Emailmarketing>
+			<active>true</active>
+			<codePool>local</codePool>
+		</Ininbox_Emailmarketing>
+	</modules>
+</config>

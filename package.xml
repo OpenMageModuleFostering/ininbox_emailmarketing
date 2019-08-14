@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+    <name>INinbox_Emailmarketing</name>
+    <version>1.2.0</version>
+    <stability>stable</stability>
+    <license uri="http://opensource.org/licenses/osl-3.0.php">OSL</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Easily send beautiful newsletters, Upload your contacts and access them whenever you are ready to mail!</summary>
+    <description>              &#xD;
+                &lt;p&gt;Nearly every business depends on email marketing, but most software is complex.  That's why we created a platform that makes email marketing EASY!&lt;/p&gt;&#xD;
+                &#xD;
+                &lt;p&gt;Check our advanced email marketing features made easy, so you can save time, save money, and run your business.&lt;/p&gt;&#xD;
+              &#xD;
+              &#xD;
+                &lt;a href="http://www.ininbox.com/feature-email-marketing.html" title="Learn More About Email Marketing Features"&gt;Check All The Email Marketing Features &gt;&gt;&lt;/a&gt;&#xD;
+              &#xD;
+            &#xD;
+</description>
+    <notes>First Preview Release</notes>
+    <authors><author><name>INinbox.com</name><user>ininbox</user><email>support@ininbox.com</email></author></authors>
+    <date>2014-03-11</date>
+    <time>07:06:33</time>
+    <contents><target name="magelocal"><dir name="Ininbox"><dir name="Emailmarketing"><dir name="Block"><dir name="Adminhtml"><dir name="Customer"><file name="Grid.php" hash="86d1a54eae6be39062ba283dded1fc74"/></dir><file name="Menu.php" hash="d4392133285bca70425219a11ca073e0"/><dir name="Newsletter"><dir name="Subscriber"><file name="Grid.php" hash="181d4c1264cec1046c3fce78959fd170"/></dir></dir><dir name="Sales"><dir name="Order"><file name="Grid.php" hash="26bb2b0670797ad9f00313efd3a40c6d"/></dir></dir></dir><file name="Field.php" hash="beed8fad3c2700554d81d56b06f2b84f"/><file name="Select.php" hash="d116f5d18322d15def9f41416c489cc9"/></dir><dir name="Helper"><file name="Data.php" hash="55b7012b702983c517697253179913d6"/></dir><dir name="Model"><dir name="Ininbox"><file name="Base.php" hash="6c86ed40cc1ed97995b79e6a78fecd3a"/><file name="Contact.php" hash="31080fd8673982c563c67c6265947fb8"/><file name="Customfield.php" hash="4d17ba0bd7750bc80c3b7fee71838d15"/><file name="Group.php" hash="901d6a5a34c3ef49b7ab518eb276d0bd"/></dir><file name="Observer.php" hash="1bf0907f2bd1c4fc963ecc9afcf4ba4c"/><dir name="System"><dir name="Config"><dir name="Source"><dir name="Customer"><file name="Attribute.php" hash="b087317b0ec0479bb06b6f5492ec2ea3"/></dir><dir name="Field"><file name="List.php" hash="cc8841df42c51ccfa5167d718635683b"/></dir><dir name="Group"><file name="List.php" hash="ecbc9d7c8ead7301616570025761957f"/></dir></dir></dir></dir></dir><dir name="controllers"><file name="AccountController.php" hash="7ef76d434c3f9a29724ec53176ac06f4"/><dir name="Adminhtml"><file name="CustomerController.php" hash="f55eda498c79e532f931b2b6a25f2c1f"/><file name="MassactionController.php" hash="d69f16f0e3fbab11b3ad1169a2a0e26f"/></dir><file name="ManageController.php" hash="a1afb00c33151ca164ce6a69d08d276f"/><file name="SubscriberController.php" hash="c1ccc8f3c75be9de1f3b2e26a7f730c8"/></dir><dir name="etc"><file name="config.xml" hash="e3c1b48e062e052e341cebabbcb538dc"/><file name="system.xml" hash="fa79b74b507b7ac496aedae1456e5710"/></dir><dir name="sql"><dir name="emailmarketing_setup"><file name="mysql4-install-0.1.0.php" hash="90441bd504fcde8f0a292e53385ccd53"/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Ininbox_Emailmarketing.xml" hash="ad90bc3dde0b7f34463702f9e8e8041d"/></dir></target><target name="mageskin"><dir name="adminhtml"><dir name="default"><dir name="default"><dir name="images"><dir name="ininbox"><file name="ininbox.png" hash="ad2cecd7c657e4bd2c6d9f99f60389d2"/></dir></dir></dir></dir></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.3.0</min><max>6.0.0</max></php></required></dependencies>
+</package>

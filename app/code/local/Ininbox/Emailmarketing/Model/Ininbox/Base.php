@@ -1,0 +1,84 @@
+<?php
+/**
+ * INinbox Email Marketing
+ * @category    INinbox
+ * @package     INinbox_Emailmarketing
+**/
+class Ininbox_Emailmarketing_Model_Ininbox_Base extends Mage_Core_Model_Abstract {
+
+	protected $api_key = '';
+	protected $curl = true;
+	protected $curlExists = true;
+	protected $api_url = '';
+
+	public $api_isready = false;
+
+	protected function _construct() {
+
+		$this->_init('emailmarketing/ininbox_base');
+
+		$helper = Mage::helper('emailmarketing');
+		if($helper->isEnabled())
+		{
+			$this->api_key = $helper->getConfig($group = 'general', $field = 'key');
+			$this->api_url = $helper->getConfig($group = 'general', $field = 'url');
+			$this->curlExists = function_exists( 'curl_init' ) && function_exists( 'curl_setopt' );
+
+			if($this->api_key != '' && $this->api_url != '' && $this->curlExists)
+			{
+				$this->api_isready = true;
+			}
+		}
+	}
+	
+	/**
+	* The direct way to make an API call. 
+	*
+	* @param string $action The API call.
+	* @param string $format API call format - json or xml.
+	* @param array $options An associative array of values to send as part of the request.
+	* @return array parsed to array XML or JSON response.
+	*/	
+	public function makeCall($action = '', $parameters='' , $format='json', $options = null){
+		
+		$postdata = null; $result = null;
+		
+		if ( isset( $options['params'] ) ){
+			$postdata = $options['params'];
+		}
+
+		if ($this->api_isready && $this->curl && $this->curlExists ){
+			
+			$url=$this->api_url.$action.'.'.$format;
+			if($parameters != '')
+				$url.='?'.$parameters;
+			$ch = curl_init( );
+			
+			$postdata = json_encode( $postdata );
+
+			curl_setopt($ch, CURLOPT_URL,$url);
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+
+			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // Returns result to a variable instead of echoing
+			curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Sets a time limit for curl in seconds (do not set too low)
+
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+			curl_setopt($ch, CURLOPT_USERPWD, $this->api_key.":");
+
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+			if($format=='json'){
+				curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Content-Length: ' . strlen($postdata)));
+			}
+			
+			$result = curl_exec($ch);
+			curl_close($ch);
+				
+			if($format=='json'){
+				return json_decode($result, true);
+			}
+		}
+		return $result;
+	}
+}
+?>

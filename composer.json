@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/INinbox_Emailmarketing",
+    "type": "magento-module",
+    "license": "OSL",
+    "homepage": "",
+    "description": "Easily send beautiful newsletters, Upload your contacts and access them whenever you are ready to mail!",
+    "authors": [
+    {
+        "name": "INinbox.com",
+        "email": "support@ininbox.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

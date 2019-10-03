@@ -1,7 +1,7 @@
 {
-    "name": "OpenMageModuleFostering\/INinbox_Emailmarketing",
+    "name": "openmage-module-fostering\/ininbox_emailmarketing",
     "type": "magento-module",
-    "license": "OSL",
+    "license": "OSL-3.0",
     "homepage": "",
     "description": "Sync your subscribers, customers & orders to an email list of choice and follow up with beautiful newsletters!",
     "authors": [

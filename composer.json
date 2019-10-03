@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/INinbox_Emailmarketing",
+    "name": "OpenMageModuleFostering\/INinbox_Emailmarketing",
     "type": "magento-module",
     "license": "OSL",
     "homepage": "",
     "description": "Sync your subscribers, customers & orders to an email list of choice and follow up with beautiful newsletters!",
     "authors": [
-    {
-        "name": "INinbox.com",
-        "email": "inspiredsupport@ininbox.com"
-    }
-],
+        {
+            "name": "INinbox.com",
+            "email": "inspiredsupport@ininbox.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
